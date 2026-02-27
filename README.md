@@ -34,19 +34,21 @@ Como os parceiros não têm acesso ao SSH, utilizaremos o módulo **Config Edit*
 ```asterisk
 [pesquisa-satisfacao]
 exten => s,1,NoOp(Iniciando Pesquisa de Satisfacao - Empresa XYZ)
-exten => s,n,Answer()
-exten => s,n(inicio),Read(NOTA,pesquisa-boas-vindas,1,,,10)
+same => n,Answer()
+same => n(inicio),Read(NOTA,pesquisa-boas-vindas,1,,,10)
 
 ; Validação da nota (1 a 5)
-exten => s,n,GotoIf($[${NOTA} >= 1 && ${NOTA} <= 5]?valido:invalido)
+; Se NOTA for vazia, define como 0 para nao quebrar o GotoIf
+same => n,GotoIf($["${NOTA}" = ""]?invalido)
+same => n,GotoIf($[${NOTA} >= 1 && ${NOTA} <= 5]?valido:invalido)
 
-exten => s,n(invalido),Playback(pesquisa-opcao-invalida)
-exten => s,n,Goto(inicio)
+same => n(invalido),Playback(pesquisa-opcao-invalida)
+same => n,Goto(inicio)
 
 ; Gravação no Banco de Dados (Campo Userfield do CDR)
-exten => s,n(valido),Set(CDR(userfield)=NOTA_PESQUISA:${NOTA})
-exten => s,n,Playback(pesquisa-agradecimento)
-exten => s,n,Hangup()
+same => n(valido),Set(CDR(userfield)=NOTA_PESQUISA:${NOTA})
+same => n,Playback(pesquisa-agradecimento)
+same => n,Hangup()
 
 ```
 
