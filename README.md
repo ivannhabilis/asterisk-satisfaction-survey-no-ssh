@@ -33,7 +33,7 @@ Como os parceiros não têm acesso ao SSH, utilizaremos o módulo **Config Edit*
 
 ```asterisk
 [pesquisa-satisfacao]
-exten => s,1,NoOp(Iniciando Pesquisa de Satisfacao - Ivann Ribeiro)
+exten => s,1,NoOp(Iniciando Pesquisa de Satisfacao - Empresa XYZ)
 exten => s,n,Answer()
 exten => s,n(inicio),Read(NOTA,pesquisa-boas-vindas,1,,,10)
 
@@ -96,5 +96,44 @@ As notas ficarão salvas no campo `Userfield` do relatório de chamadas (CDR).
 
 * Acesse **Reports > CDR Reports**.
 * A nota aparecerá como `NOTA_PESQUISA:X`.
+
+---
+
+## 🔍 Como Validar a Gravação das Notas (Sem SSH)
+
+Utilizando as ferramentas nativas da interface do **IncrediblePBX**.
+
+### Opção 1: Relatório de Chamadas (CDR Reports)
+
+Maneira mais simples de verificar se a nota foi salva com sucesso.
+
+1. No menu superior, acesse **Reports > CDR Reports**.
+2. Clique no botão **Search** para carregar as chamadas recentes.
+3. Localize a coluna **Userfield**.
+* Ela conterá o registro formatado como: `NOTA_PESQUISA:5` (ou o valor digitado).
+
+
+4. **Dica:** Caso a coluna não esteja visível, clique no ícone de engrenagem ou opções da tabela e certifique-se de que o campo **Userfield** está marcado para exibição.
+
+### Opção 2: Monitoramento em Tempo Real (Asterisk Log Files)
+
+Se você quiser ver o "passo a passo" do cliente digitando a nota enquanto a chamada acontece:
+
+1. Acesse **Admin > Asterisk Log Files**.
+2. Selecione o arquivo de log chamado `full`.
+3. Ative a opção **Auto-Scroll** e defina o intervalo de atualização para **3 Seconds**.
+4. Procure por linhas contendo `Iniciando Pesquisa de Satisfacao`.
+5. Você verá o Asterisk processando a nota:
+* Procure pela linha: `Executing [... Set("CDR(userfield)=NOTA_PESQUISA:X")]`. Isso confirma que o sistema escreveu o dado com sucesso.
+
+---
+
+## 🛠️ Solução de Problemas (Troubleshooting)
+
+Se as notas não estiverem aparecendo no Userfield:
+
+* **Configuração do CDR:** No menu **Settings > Advanced Settings**, verifique se a opção "Log CDR Userfield" está marcada como `Yes`.
+* **Fluxo da Chamada:** Certifique-se de que o agente realizou a transferência (Blind Transfer) para o ramal **500**. Se o cliente desligar antes de digitar a nota, nada será gravado.
+* **Nomes dos Áudios:** Verifique em **Admin > System Recordings** se os arquivos foram carregados com os nomes exatos utilizados no script: `pesquisa-boas-vindas`, `pesquisa-agradecimento` e `pesquisa-opcao-invalida`.
 
 ---
