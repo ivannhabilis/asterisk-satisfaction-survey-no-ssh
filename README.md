@@ -35,19 +35,19 @@ Como os parceiros não têm acesso ao SSH, utilizaremos o módulo **Config Edit*
 [pesquisa-satisfacao]
 exten => s,1,NoOp(Iniciando Pesquisa de Satisfacao - Empresa XYZ)
 same => n,Answer()
-same => n(inicio),Read(NOTA,pesquisa-boas-vindas,1,,,10)
+same => n(inicio),Read(NOTA,custom/pesquisa-boas-vindas,1,,,10)
 
 ; Validação da nota (1 a 5)
 ; Se NOTA for vazia, define como 0 para nao quebrar o GotoIf
 same => n,GotoIf($["${NOTA}" = ""]?invalido)
 same => n,GotoIf($[${NOTA} >= 1 && ${NOTA} <= 5]?valido:invalido)
 
-same => n(invalido),Playback(pesquisa-opcao-invalida)
+same => n(invalido),Playback(custom/pesquisa-opcao-invalida)
 same => n,Goto(inicio)
 
 ; Gravação no Banco de Dados (Campo Userfield do CDR)
 same => n(valido),Set(CDR(userfield)=NOTA_PESQUISA:${NOTA})
-same => n,Playback(pesquisa-agradecimento)
+same => n,Playback(custom/pesquisa-agradecimento)
 same => n,Hangup()
 
 ```
